@@ -1,31 +1,53 @@
 {
-  description = "Home Manager configuration of Jane Doe";
+  description = "Home Manager configuration";
 
   inputs = {
     # Specify the source of Home Manager and Nixpkgs.
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
+    nixpkgs-unstable.url = "github:NixOs/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager/release-22.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { nixpkgs, home-manager, ... }:
+  outputs = { nixpkgs, flake-utils, home-manager, nixpkgs-unstable, ... }:
     let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in {
-      homeConfigurations.jdoe = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
+      utils = flake-utils;
+      user = import ./user.nix;
+    in
+    utils.lib.eachDefaultSystem (system:
+      let
+        stable-pkgs = nixpkgs.legacyPackages.${system};
+        unstable-pkgs = nixpkgs-unstable.legacyPackages.${system};
+        pkgs = stable-pkgs // {
+          # provides alias for all ustable pkgs
+          unstable = unstable-pkgs;
 
-        # Specify your home configuration modules here, for example,
-        # the path to your home.nix.
-        modules = [
-          ./home.nix
-        ];
+          starship = unstable-pkgs.starship;
+          git = unstable-pkgs.git;
+        };
+      in
+      {
+        formatter = pkgs.nixpkgs-fmt;
 
-        # Optionally use extraSpecialArgs
-        # to pass through arguments to home.nix
-      };
-    };
+        packages = {
+          homeConfigurations.${user.name} = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+
+            # Specify your home configuration modules here, for example,
+            # the path to your home.nix.
+            modules = [
+              ./home.nix
+            ];
+
+            # Optionally use extraSpecialArgs
+            # to pass through arguments to home.nix
+            extraSpecialArgs = {
+              inherit pkgs;
+            };
+          };
+        };
+      });
 }

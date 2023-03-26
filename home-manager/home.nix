@@ -1,7 +1,9 @@
+let
+  user = import ./user.nix;
+in
 {
-  # Set following two fields in your home.user.nix properly
-  home.username = "jdoe";
-  home.homeDirectory = "/home/jdoe";
+  home.username = user.name;
+  home.homeDirectory = user.homeDir;
   home.stateVersion = "22.11";
 }
 
