@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+backup_file_if_exists() {
+  local file="$1"
+
+  if [ -f $file ];
+  then
+    mv -f $file $file.bak 
+  fi
+}
+
+backup_file_if_exists ~/.bashrc
+backup_file_if_exists ~/.zshrc
+backup_file_if_exists ~/.config/fish/config.fish
+
+case "$(uname -s)" in
+  Darwin)
+    # for MacOS as we would be installing 
+    # nix-darwin as well
+    # it is good idea to back up the original 
+    sudo backup_file_if_exists /etc/zshrc
+    sudo backup_file_if_exists /etc/bashrc
+    ;;
+esac
