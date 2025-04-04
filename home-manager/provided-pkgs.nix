@@ -7,10 +7,8 @@ let
   provided-pkgs = with pkgs; [
     # Provide org-wide packages here
     bashInteractive
-    jq
     curl
     git
-    nodejs-18_x
   ];
   with-user-pkgs = inst:
     let
