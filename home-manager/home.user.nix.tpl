@@ -9,10 +9,8 @@ in
       excludes = [ ];
       includes = [
         gh
-        exa
         lazygit
         bat
-        zellij
       ];
     };
 
