@@ -15,6 +15,8 @@ return {
       vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
       vim.keymap.set('n', '<leader>fx', builtin.diagnostics, { desc = 'Telescope diagnostics' })
       vim.keymap.set('n', '<leader>frr', builtin.lsp_references, { desc = 'Telescope lsp_references' })
+      vim.keymap.set('n', '<leader>fdo', builtin.lsp_document_symbols, { desc = 'Telescope lsp_document_symbols' })
+      vim.keymap.set('n', '<leader>fwo', builtin.lsp_dynamic_workspace_symbols, { desc = 'Telescope lsp_document_symbols' })
     end,
   }
 }
